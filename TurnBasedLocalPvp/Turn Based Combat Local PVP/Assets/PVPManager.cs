@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -48,6 +49,7 @@ public class PVPManager : MonoBehaviour
         Cameras[2].SetActive(false);
         playerUI[0].SetActive(true);
         playerUI[1].SetActive(false);
+        players[1].transform.LookAt(startingPositions[0].transform);
     }
     public void AttackButtonPlayer1()
     {
@@ -68,6 +70,9 @@ public class PVPManager : MonoBehaviour
     {
         if (hasPressedAttack)
         {
+            Transform lookatPosition = startingPositions[1].transform;
+            Vector3 targetPositionlookat = lookatPosition.position;
+            players[0].transform.LookAt(lookatPosition);
             Animator playerAnimator = players[0].GetComponent<Animator>();
             playerAnimator.SetBool("isRunning", true);;
             Vector3 player2Position = players[1].transform.position;
@@ -108,22 +113,29 @@ public class PVPManager : MonoBehaviour
     private IEnumerator player1CoroutineReturnToStartPos(float waitTime)
     {
         yield return new WaitForSeconds(waitTime);
+        Transform startingPositionLookat = startingPositions[1].transform;
+        Vector3 targetPositionlookat = startingPositionLookat.position;
 
         Transform startingPosition = startingPositions[0].transform;
         Vector3 targetPosition = startingPosition.position;
-        float elapsedTime = 0f;
 
+        float elapsedTime = 0f;
+        Animator playerAnimator = players[0].GetComponent<Animator>();
+        playerAnimator.SetBool("isRunning", true);
+       
         while (elapsedTime < 3.0f) 
         {
             players[0].transform.position = Vector3.MoveTowards(players[0].transform.position, targetPosition, runSpeed * Time.deltaTime);
+            players[0].transform.LookAt(targetPosition);
             elapsedTime += Time.deltaTime;
             yield return null;
         }
 
-        Animator playerAnimator = players[0].GetComponent<Animator>();
+       
         players[0].transform.position = targetPosition;
         playerAnimator.SetBool("isRunning", false);
         healths[0].gameObject.SetActive(true);
+        players[0].transform.LookAt(targetPositionlookat);
         print("Coroutine for player1 return to start position Ended " + Time.time + " seconds");
     }
     #endregion player1Stuff
@@ -145,7 +157,7 @@ public class PVPManager : MonoBehaviour
         Cameras[1].SetActive(false);
         Cameras[2].SetActive(false);
         //    animPlayer1.SetTrigger("AttackP1");
-        coroutinePlayer2 = player2Coroutine(2.0f);
+        coroutinePlayer2 = player2Coroutine(8.0f);
         hasPressedAttackP2 = true;
         int randomIndex = Random.Range(0, audioClipsAttackPlayer2.Length);
         aud.clip = audioClipsAttackPlayer2[randomIndex];
@@ -165,13 +177,13 @@ public class PVPManager : MonoBehaviour
             Animator playerAnimator = players[1].GetComponent<Animator>();
             playerAnimator.SetBool("isRunning", true); ;
             Vector3 player2Position = players[0].transform.position;
-            float distanceToTarget = Vector3.Distance(players[0].transform.position, player2Position);
+            float distanceToTarget = Vector3.Distance(players[1].transform.position, player2Position);
             Debug.Log(distanceToTarget);
             players[1].transform.position = Vector3.MoveTowards(players[1].transform.position, player2Position, Time.deltaTime * runSpeed);
             healths[1].gameObject.SetActive(false);
             if (distanceToTarget < 2f)
             {
-                players[0].transform.LookAt(players[0]);
+                players[1].transform.LookAt(players[0]);
                 playerAnimator.SetTrigger("Attack");
                 playerAnimator.SetBool("isRunning", false);
                 hasPressedAttackP2 = false;
@@ -181,11 +193,39 @@ public class PVPManager : MonoBehaviour
                 aud.clip = audioClipHurtPlayer2;
                 aud.Play();
                 players[0].GetComponent<PlayerHealth>().LoseHealth();
-                coroutinePlayer1returntoStartPos = player1CoroutineReturnToStartPos(1.0f);
+                coroutinePlayer1returntoStartPos = player2CoroutineReturnToStartPos(1.0f);
                 StartCoroutine(coroutinePlayer1returntoStartPos);
 
             }
         }
+    }
+    private IEnumerator player2CoroutineReturnToStartPos(float waitTime)
+    {
+        yield return new WaitForSeconds(waitTime);
+        Transform startingPositionLookat = startingPositions[0].transform;
+        Vector3 targetPositionlookat = startingPositionLookat.position;
+        Transform startingPosition = startingPositions[1].transform;
+        Vector3 targetPosition = startingPosition.position;
+        float elapsedTime = 0f;
+        Animator playerAnimator = players[1].GetComponent<Animator>();
+        playerAnimator.SetBool("isRunning",true);
+        //  Quaternion startRotation = players[1].transform.rotation;
+        //    Quaternion targetRotation = Quaternion.LookRotation(targetPosition - players[1].transform.position);
+        while (elapsedTime < 3.0f)
+        {
+            players[1].transform.position = Vector3.MoveTowards(players[1].transform.position, targetPosition, runSpeed * Time.deltaTime);
+            players[1].transform.LookAt(targetPosition);
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+
+        Animator playerAnimator2 = players[1].GetComponent<Animator>();
+        players[1].transform.position = targetPosition;
+        //playerAnimator.SetBool("isRunning", false);
+        healths[1].gameObject.SetActive(true);
+        playerAnimator.SetBool("isRunning", false);
+        players[1].transform.LookAt(targetPositionlookat);
+        print("Coroutine for player1 return to start position Ended " + Time.time + " seconds");
     }
 
     #endregion Player2Stuff
