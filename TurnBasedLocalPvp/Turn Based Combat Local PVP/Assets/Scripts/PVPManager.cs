@@ -14,9 +14,13 @@ public class PVPManager : MonoBehaviour
     private IEnumerator coroutinePlayer1;
     private IEnumerator coroutinePlayer2;
     private IEnumerator coroutinePlayer1returntoStartPos;
+    private IEnumerator coroutineHealPlayer1;
+    private IEnumerator coroutineHealPlayer2;
     [SerializeField] private float runSpeed = 5;
     [SerializeField] public bool hasPressedAttack = false;
     [SerializeField] public bool hasPressedAttackP2 = false;
+    public bool player1Attacking = false;
+    public bool player2Attacking = false;
     public GameObject[] healths;
     public AudioClip[] audioClipsAttackPlayer1;
     public AudioClip audioClipHurtPlayer1;
@@ -28,6 +32,8 @@ public class PVPManager : MonoBehaviour
         Cameras[0].SetActive(true);
         Cameras[1].SetActive(false);
         Cameras[2].SetActive(false);
+        Cameras[3].SetActive(false);
+        Cameras[4].SetActive(false);
         playerUI[0].SetActive(false);
         playerUI[1].SetActive(false);
         coroutineStartGame = startGameCoroutine(3.0f);
@@ -47,6 +53,8 @@ public class PVPManager : MonoBehaviour
         Cameras[0].SetActive(false);
         Cameras[1].SetActive(true);
         Cameras[2].SetActive(false);
+        Cameras[3].SetActive(false);
+        Cameras[4].SetActive(false);
         playerUI[0].SetActive(true);
         playerUI[1].SetActive(false);
         players[1].transform.LookAt(startingPositions[0].transform);
@@ -58,6 +66,8 @@ public class PVPManager : MonoBehaviour
         Cameras[0].SetActive(true);
         Cameras[1].SetActive(false);
         Cameras[2].SetActive(false);
+        Cameras[3].SetActive(false);
+        Cameras[4].SetActive(false);
         int randomIndex = Random.Range(0, audioClipsAttackPlayer1.Length);
         aud.clip = audioClipsAttackPlayer1[randomIndex];
         aud.Play();
@@ -80,25 +90,39 @@ public class PVPManager : MonoBehaviour
           Debug.Log(distanceToTarget);
          players[0].transform.position = Vector3.MoveTowards(players[0].transform.position, player2Position, Time.deltaTime * runSpeed);
             healths[0].gameObject.SetActive(false);
-             if(distanceToTarget<1.3)
+             if(distanceToTarget<1.6)
             {
                 players[0].transform.LookAt(players[1]);
                 playerAnimator.SetTrigger("Attack");
                 playerAnimator.SetBool("isRunning", false);
                 hasPressedAttack = false;
-                Debug.Log("Attacked");
+                //Debug.Log("Attacked");
                 Animator playerAnimator2 = players[1].GetComponent<Animator>();
                 playerAnimator2.SetTrigger("isHurt");
                 aud.clip = audioClipHurtPlayer2;
                 aud.Play();
-             
+                player1Attacking = true;
                 coroutinePlayer1returntoStartPos = player1CoroutineReturnToStartPos(1.0f);
                 StartCoroutine(coroutinePlayer1returntoStartPos);
 
             }
         }
     }
-    
+    public void HealPlayer1()
+    {
+        playerUI[0].SetActive(false);
+        playerUI[1].SetActive(false);
+        Cameras[0].SetActive(false);
+        Cameras[1].SetActive(false);
+        Cameras[2].SetActive(false);
+        Cameras[3].SetActive(true);
+        Cameras[4].SetActive(false);
+        Animator playerAnimator = players[0].GetComponent<Animator>();
+        playerAnimator.SetTrigger("Heal");
+        players[0].GetComponent<PlayerHealth>().GainHealth();
+        coroutinePlayer1 = player1Coroutine(8.0f);
+        StartCoroutine(coroutinePlayer1);
+    }
     private void Update()
     {
         MoveTowardsPlayerAndAttackPlayer1();
@@ -107,6 +131,7 @@ public class PVPManager : MonoBehaviour
     private IEnumerator player1Coroutine(float waitTime)
     {
         yield return new WaitForSeconds(waitTime);
+        player1Attacking = false;
         Player2Turn(); 
         print("Coroutine for player1 Ended " + Time.time + " seconds");
     }
@@ -146,6 +171,8 @@ public class PVPManager : MonoBehaviour
         Cameras[0].SetActive(false);
         Cameras[1].SetActive(false);
         Cameras[2].SetActive(true);
+        Cameras[3].SetActive(false);
+        Cameras[4].SetActive(false);
         playerUI[0].SetActive(false);
         playerUI[1].SetActive(true);
     }
@@ -156,12 +183,29 @@ public class PVPManager : MonoBehaviour
         Cameras[0].SetActive(true);
         Cameras[1].SetActive(false);
         Cameras[2].SetActive(false);
+        Cameras[3].SetActive(false);
+        Cameras[4].SetActive(false);
         //    animPlayer1.SetTrigger("AttackP1");
         coroutinePlayer2 = player2Coroutine(8.0f);
         hasPressedAttackP2 = true;
         int randomIndex = Random.Range(0, audioClipsAttackPlayer2.Length);
         aud.clip = audioClipsAttackPlayer2[randomIndex];
         aud.Play();
+        StartCoroutine(coroutinePlayer2);
+    }
+    public void HealPlayer2()
+    {
+        playerUI[0].SetActive(false);
+        playerUI[1].SetActive(false);
+        Cameras[0].SetActive(false);
+        Cameras[1].SetActive(false);
+        Cameras[2].SetActive(false);
+        Cameras[3].SetActive(false);
+        Cameras[4].SetActive(true);
+        Animator playerAnimator = players[1].GetComponent<Animator>();
+        playerAnimator.SetTrigger("Heal");
+        players[1].GetComponent<PlayerHealth>().GainHealth();
+        coroutinePlayer2 = player2Coroutine(8.0f);
         StartCoroutine(coroutinePlayer2);
     }
     private IEnumerator player2Coroutine(float waitTime)
@@ -178,16 +222,16 @@ public class PVPManager : MonoBehaviour
             playerAnimator.SetBool("isRunning", true); ;
             Vector3 player2Position = players[0].transform.position;
             float distanceToTarget = Vector3.Distance(players[1].transform.position, player2Position);
-            Debug.Log(distanceToTarget);
+         //   Debug.Log(distanceToTarget);
             players[1].transform.position = Vector3.MoveTowards(players[1].transform.position, player2Position, Time.deltaTime * runSpeed);
             healths[1].gameObject.SetActive(false);
-            if (distanceToTarget < 1f)
+            if (distanceToTarget < 1.6f)
             {
                 players[1].transform.LookAt(players[0]);
                 playerAnimator.SetTrigger("Attack");
                 playerAnimator.SetBool("isRunning", false);
                 hasPressedAttackP2 = false;
-                Debug.Log("Attacked");
+            //    Debug.Log("Attacked");
                 Animator playerAnimator2 = players[0].GetComponent<Animator>();
                 playerAnimator2.SetTrigger("isHurt");
                 aud.clip = audioClipHurtPlayer2;
