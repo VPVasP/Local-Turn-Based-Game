@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -8,13 +9,13 @@ public class PlayerHealth : MonoBehaviour
     public Slider healthSlider;
     public float health;
     private Animator anim;
-   
     private void Start()
     {
         health = 100;
         healthSlider = GetComponentInChildren<Slider>();
         healthSlider.value = health;
         anim = GetComponent<Animator>();
+    
     }
     public void GainHealth()
     {

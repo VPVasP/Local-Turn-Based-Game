@@ -6,6 +6,7 @@ using UnityEngine.UIElements;
 
 public class PVPManager : MonoBehaviour
 {
+    public static PVPManager instance;
     public GameObject[] Cameras;
     public GameObject[] playerUI;
     public Transform[] players;
@@ -26,7 +27,13 @@ public class PVPManager : MonoBehaviour
     public AudioClip audioClipHurtPlayer1;
     public AudioClip audioClipHurtPlayer2;
     public AudioClip[] audioClipsAttackPlayer2;
-    private AudioSource aud;
+    [SerializeField] private AudioClip healAudioClip;
+    public AudioSource aud;
+    public AudioSource mainMusic;
+    private void Awake()
+    {
+        instance = this;
+    }
     private void Start()
     {
         Cameras[0].SetActive(true);
@@ -69,6 +76,7 @@ public class PVPManager : MonoBehaviour
         Cameras[3].SetActive(false);
         Cameras[4].SetActive(false);
         int randomIndex = Random.Range(0, audioClipsAttackPlayer1.Length);
+        mainMusic.volume = 0.3f;
         aud.clip = audioClipsAttackPlayer1[randomIndex];
         aud.Play();
         //   animPlayer1.SetTrigger("AttackP1");
@@ -120,7 +128,10 @@ public class PVPManager : MonoBehaviour
         Animator playerAnimator = players[0].GetComponent<Animator>();
         playerAnimator.SetTrigger("Heal");
         players[0].GetComponent<PlayerHealth>().GainHealth();
+        mainMusic.volume = 0.3f;
         coroutinePlayer1 = player1Coroutine(8.0f);
+        aud.clip = healAudioClip;
+        aud.Play();
         StartCoroutine(coroutinePlayer1);
     }
     private void Update()
@@ -132,6 +143,7 @@ public class PVPManager : MonoBehaviour
     {
         yield return new WaitForSeconds(waitTime);
         player1Attacking = false;
+        mainMusic.volume = 1f;
         Player2Turn(); 
         print("Coroutine for player1 Ended " + Time.time + " seconds");
     }
@@ -140,7 +152,7 @@ public class PVPManager : MonoBehaviour
         yield return new WaitForSeconds(waitTime);
         Transform startingPositionLookat = startingPositions[1].transform;
         Vector3 targetPositionlookat = startingPositionLookat.position;
-
+        mainMusic.volume = 1f;
         Transform startingPosition = startingPositions[0].transform;
         Vector3 targetPosition = startingPosition.position;
 
@@ -175,6 +187,7 @@ public class PVPManager : MonoBehaviour
         Cameras[4].SetActive(false);
         playerUI[0].SetActive(false);
         playerUI[1].SetActive(true);
+        mainMusic.volume = 1f;
     }
     public void AttackPlayer2()
     {
@@ -191,6 +204,7 @@ public class PVPManager : MonoBehaviour
         int randomIndex = Random.Range(0, audioClipsAttackPlayer2.Length);
         aud.clip = audioClipsAttackPlayer2[randomIndex];
         aud.Play();
+        mainMusic.volume = 0.3f;
         StartCoroutine(coroutinePlayer2);
     }
     public void HealPlayer2()
@@ -205,12 +219,16 @@ public class PVPManager : MonoBehaviour
         Animator playerAnimator = players[1].GetComponent<Animator>();
         playerAnimator.SetTrigger("Heal");
         players[1].GetComponent<PlayerHealth>().GainHealth();
+        mainMusic.volume = 0.3f;
+        aud.clip = healAudioClip;
+        aud.Play();
         coroutinePlayer2 = player2Coroutine(8.0f);
         StartCoroutine(coroutinePlayer2);
     }
     private IEnumerator player2Coroutine(float waitTime)
     {
         yield return new WaitForSeconds(waitTime);
+        mainMusic.volume = 1f;
         Player1Turn();
         print("Coroutine for player1 Ended " + Time.time + " seconds");
     }
@@ -246,6 +264,7 @@ public class PVPManager : MonoBehaviour
     {
         yield return new WaitForSeconds(waitTime);
         Transform startingPositionLookat = startingPositions[0].transform;
+
         Vector3 targetPositionlookat = startingPositionLookat.position;
         Transform startingPosition = startingPositions[1].transform;
         Vector3 targetPosition = startingPosition.position;
@@ -254,6 +273,7 @@ public class PVPManager : MonoBehaviour
         playerAnimator.SetBool("isRunning",true);
         //  Quaternion startRotation = players[1].transform.rotation;
         //    Quaternion targetRotation = Quaternion.LookRotation(targetPosition - players[1].transform.position);
+        mainMusic.volume = 1f;
         while (elapsedTime < 3.0f)
         {
             players[1].transform.position = Vector3.MoveTowards(players[1].transform.position, targetPosition, runSpeed * Time.deltaTime);

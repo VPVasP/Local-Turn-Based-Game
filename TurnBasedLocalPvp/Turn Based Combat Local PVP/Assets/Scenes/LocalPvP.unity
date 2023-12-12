@@ -2623,6 +2623,9 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 44a8376c97fece6478d8d423a51bf85c, type: 3}
   - {fileID: 8300000, guid: 9549e0a64854eb94b95950c337a72814, type: 3}
   - {fileID: 8300000, guid: df1de542d9b2d1f46bc8f87cb607180c, type: 3}
+  healAudioClip: {fileID: 8300000, guid: 7b584646512224e4582c365aef593b1b, type: 3}
+  aud: {fileID: 0}
+  mainMusic: {fileID: 2126521168}
 --- !u!4 &1997118316
 Transform:
   m_ObjectHideFlags: 0
