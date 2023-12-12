@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
@@ -9,6 +10,7 @@ public class PlayerHealth : MonoBehaviour
     public Slider healthSlider;
     public float health;
     private Animator anim;
+    public string otherplayerName;
     private void Start()
     {
         health = 100;
@@ -42,7 +44,13 @@ public class PlayerHealth : MonoBehaviour
         {
             anim.SetTrigger("Dead");
             healthSlider.enabled = false;
-            Destroy(this.gameObject, 2f);
+            Invoke("EndScreen", 2f);
+            // Destroy(this.gameObject, 2f);
         }
+    }
+    private void EndScreen()
+    {
+        PVPManager.instance.EndOfGame();
+        PVPManager.instance.winnerScreen.GetComponentInChildren<TextMeshProUGUI>().text = otherplayerName + " Won";
     }
 }

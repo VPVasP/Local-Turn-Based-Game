@@ -1,7 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using UnityEditor.SearchService;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
 
 public class PVPManager : MonoBehaviour
@@ -30,6 +32,7 @@ public class PVPManager : MonoBehaviour
     [SerializeField] private AudioClip healAudioClip;
     public AudioSource aud;
     public AudioSource mainMusic;
+    public GameObject winnerScreen;
     private void Awake()
     {
         instance = this;
@@ -46,6 +49,7 @@ public class PVPManager : MonoBehaviour
         coroutineStartGame = startGameCoroutine(3.0f);
         StartCoroutine(coroutineStartGame);
         aud = GetComponent<AudioSource>();
+        winnerScreen.SetActive(false);
     }
     private IEnumerator startGameCoroutine(float waitTime)
     {
@@ -98,7 +102,7 @@ public class PVPManager : MonoBehaviour
           Debug.Log(distanceToTarget);
          players[0].transform.position = Vector3.MoveTowards(players[0].transform.position, player2Position, Time.deltaTime * runSpeed);
             healths[0].gameObject.SetActive(false);
-             if(distanceToTarget<1.6)
+             if(distanceToTarget<1.4)
             {
                 players[0].transform.LookAt(players[1]);
                 playerAnimator.SetTrigger("Attack");
@@ -292,4 +296,15 @@ public class PVPManager : MonoBehaviour
     }
 
     #endregion Player2Stuff
+
+    public void EndOfGame()
+    {
+        winnerScreen.SetActive(true);
+        Invoke("RestartingGame", 6f);
+    }
+    private void RestartingGame()
+    {
+        string currentSceneName = SceneManager.GetActiveScene().name;
+        SceneManager.LoadScene(currentSceneName);
+    }
 }
