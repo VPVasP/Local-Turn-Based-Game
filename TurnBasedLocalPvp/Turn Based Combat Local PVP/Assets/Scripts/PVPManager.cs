@@ -32,6 +32,7 @@ public class PVPManager : MonoBehaviour
     public AudioSource aud;
     public AudioSource mainMusic;
     public GameObject winnerScreen;
+    public GameObject[] healthPotions;
     private void Awake()
     {
         instance = this;
@@ -49,6 +50,8 @@ public class PVPManager : MonoBehaviour
         StartCoroutine(coroutineStartGame);
         aud = GetComponent<AudioSource>();
         winnerScreen.SetActive(false);
+        healthPotions[0].SetActive(false);
+        healthPotions[1].SetActive(false);
     }
     private IEnumerator startGameCoroutine(float waitTime)
     {
@@ -133,8 +136,9 @@ public class PVPManager : MonoBehaviour
         players[0].GetComponent<PlayerHealth>().GainHealth();
         mainMusic.volume = 0.3f;
         coroutinePlayer1 = player1Coroutine(8.0f);
-        aud.clip = healAudioClip;
-        aud.Play();
+        Invoke("PlayHealSound", 3f);
+        healthPotions[0].SetActive(true);
+        healthPotions[1].SetActive(false);
         StartCoroutine(coroutinePlayer1);
     }
     private void Update()
@@ -147,6 +151,9 @@ public class PVPManager : MonoBehaviour
         yield return new WaitForSeconds(waitTime);
         player1Attacking = false;
         mainMusic.volume = 1f;
+        healthPotions[0].SetActive(false);
+        healthPotions[1].SetActive(false);
+        StartCoroutine(coroutinePlayer1);
         Player2Turn(); 
         print("Coroutine for player1 Ended " + Time.time + " seconds");
     }
@@ -222,16 +229,24 @@ public class PVPManager : MonoBehaviour
         Animator playerAnimator = players[1].GetComponent<Animator>();
         playerAnimator.SetTrigger("Heal");
         players[1].GetComponent<PlayerHealth>().GainHealth();
+        Invoke("PlayHealSound", 3f);
         mainMusic.volume = 0.3f;
-        aud.clip = healAudioClip;
-        aud.Play();
+        healthPotions[0].SetActive(false);
+        healthPotions[1].SetActive(true);
         coroutinePlayer2 = player2Coroutine(8.0f);
         StartCoroutine(coroutinePlayer2);
+    }
+    private void PlayHealSound()
+    {
+        aud.clip = healAudioClip;
+        aud.Play();
     }
     private IEnumerator player2Coroutine(float waitTime)
     {
         yield return new WaitForSeconds(waitTime);
         mainMusic.volume = 1f;
+        healthPotions[0].SetActive(false);
+        healthPotions[1].SetActive(false);
         Player1Turn();
         print("Coroutine for player1 Ended " + Time.time + " seconds");
     }
