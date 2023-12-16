@@ -10,13 +10,14 @@ public class PlayerHealth : MonoBehaviour
     public float health;
     private Animator anim;
     public string otherplayerName;
+    public Button[] potionHealthButtons;
     private void Start()
     {
         health = 100;
         healthSlider = GetComponentInChildren<Slider>();
         healthSlider.value = health;
         anim = GetComponent<Animator>();
-    
+       
     }
     public void GainHealth()
     {
@@ -26,9 +27,11 @@ public class PlayerHealth : MonoBehaviour
             health += randomValue;
             healthSlider.value = health;
             health = Mathf.Min(health, 100);
+           
             Debug.Log("Added Health " + randomValue);
             Debug.Log(health);
         }
+      
     }
     public void LoseHealth()
     {

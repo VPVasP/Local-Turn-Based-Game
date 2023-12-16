@@ -141,6 +141,7 @@ public class PVPManager : MonoBehaviour
         healthPotions[1].SetActive(false);
         StartCoroutine(coroutinePlayer1);
     }
+  
     private void Update()
     {
         MoveTowardsPlayerAndAttackPlayer1();

@@ -633,6 +633,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 6515712193588681746, guid: c143ef5a9812dbe47b2102257b7966a1, type: 3}
   m_PrefabInstance: {fileID: 2129524722}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &442339397 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 880618500947999120, guid: f91459ffc79bc234b8f6543cb933487d, type: 3}
+  m_PrefabInstance: {fileID: 4301026634880669869}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &475340697 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -1945125607621864157, guid: c143ef5a9812dbe47b2102257b7966a1, type: 3}
@@ -2395,6 +2406,7 @@ MonoBehaviour:
   healthSlider: {fileID: 0}
   health: 0
   otherplayerName: Player 1
+  potionHealthButtons: []
 --- !u!114 &1488646787
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4280,6 +4292,9 @@ MonoBehaviour:
   healthSlider: {fileID: 0}
   health: 0
   otherplayerName: Player 2
+  potionHealthButtons:
+  - {fileID: 442339397}
+  - {fileID: 442339397}
 --- !u!1 &2135974845
 GameObject:
   m_ObjectHideFlags: 0
