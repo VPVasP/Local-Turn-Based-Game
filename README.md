@@ -1,4 +1,4 @@
-# Local Turn Based Game created in unity with 2 players playing.
+# Local Turn Based Game created in Unity.
 This is a local turn based game where in each turn the player can either attack or heal. The goal is to defeat the other player and win.
 
 ## Features:
