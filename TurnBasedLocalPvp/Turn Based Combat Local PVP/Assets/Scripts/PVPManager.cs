@@ -56,6 +56,8 @@ public class PVPManager : MonoBehaviour
         winnerScreen.SetActive(false);
         healthPotions[0].SetActive(false);
         healthPotions[1].SetActive(false);
+        Screen.sleepTimeout = SleepTimeout.NeverSleep;
+
     }
     //coroutine for delaying the start of the game
     private IEnumerator startGameCoroutine(float waitTime)
